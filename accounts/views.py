@@ -12,44 +12,42 @@ from django.contrib.auth.decorators import login_required
 from .models import *
 from .forms import OrderForm, CreateUserForm
 from .filters import OrderFilter
+from .decorators import unauthenticated_user
 
-def registerPage(request):
-	if request.user.is_authenticated:
-		return redirect('home')
-	else:
-		form = CreateUserForm()
+@unauthenticated_user
+def registerPage(request):	
 
-		if request.method == 'POST':
-			form = CreateUserForm(request.POST)
-			if form.is_valid():
-				form.save()		
-				user = form.cleaned_data.get('username')
-				messages.success(request, 'Account was created for ' + user)
+	form = CreateUserForm()
 
-				return redirect('login')
+	if request.method == 'POST':
+		form = CreateUserForm(request.POST)
+		if form.is_valid():
+			form.save()		
+			user = form.cleaned_data.get('username')
+			messages.success(request, 'Account was created for ' + user)
 
-		context = {'form':form}
-		return render(request, 'accounts/register.html', context)
+			return redirect('login')
 
+	context = {'form':form}
+	return render(request, 'accounts/register.html', context)
 
+@unauthenticated_user
 def loginPage(request):
-	if request.user.is_authenticated:
-		return redirect('home')
-	else:
-		if request.method == 'POST':
-			username = request.POST.get('username')
-			password = request.POST.get('password')
 
-			user = authenticate(request, username=username, password=password)
+	if request.method == 'POST':
+		username = request.POST.get('username')
+		password = request.POST.get('password')
 
-			if user is not None:
-				login(request, user)
-				return redirect('home')
-			else:
-				messages.info(request, 'Username or password is incorrect!')
+		user = authenticate(request, username=username, password=password)
 
-		context = {}
-		return render(request, 'accounts/login.html', context)
+		if user is not None:
+			login(request, user)
+			return redirect('home')
+		else:
+			messages.info(request, 'Username or password is incorrect!')
+
+	context = {}
+	return render(request, 'accounts/login.html', context)
 
 def logoutUser(request):
 	logout(request)
@@ -68,6 +66,10 @@ def home(request):
 	context = {'orders':orders, 'customers':customers, 'total_orders':total_orders, 'delivered':delivered, 'pending':pending}
 
 	return render(request, 'accounts/dashboard.html', context)
+
+def userPage(request):
+	context = {}
+	return render(request, 'accounts/user.html', context)	
 
 @login_required(login_url='login')
 def products(request):
