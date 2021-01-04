@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'accounts',
+    'accounts.apps.AccountsConfig',
 
     'django_filters'
 ]
@@ -129,6 +129,26 @@ MEDIA_URL = '/images/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images')
+
+
+# SMTP Configuration
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_ROOT = 465
+EMAIL_USE_TLS = True
+EMAIL_POST_USER= 'jenesg@gmail.com'
+EMAIL_HOST_PASSWORD = 'your password'
+
+
+
+
+
+
+
+
 
 
 
